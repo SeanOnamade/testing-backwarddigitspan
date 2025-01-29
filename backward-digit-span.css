@@ -1,0 +1,183 @@
+/* General styles */
+body {
+    background-color: #121212;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    font-size: 22px;
+    margin: 15px 0;
+}
+
+/* Progress bar */
+#jspsych-progressbar-container {
+    height: 20px;
+    border-radius: 10px;
+    background-color: #333;
+    width: unset !important;
+    margin: 20px auto;
+    margin-left: 20px;
+    margin-right: 20px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+}
+
+
+#jspsych-progressbar-outer {
+    height: 100%;
+    border-radius: 10px;
+    width: 90%;
+    overflow: hidden;
+    transition: width 0.5s ease-in-out;
+}
+
+
+#jspsych-progressbar-inner {
+    background-color:rgb(9, 123, 237) !important; /* Green progress */
+    width: 0%;
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out;
+}
+
+.response-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+}
+
+/* The instruction text */
+.instruction-text {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.instruction-text b {
+    color: #FF5252; /* Soft Red */
+}
+
+/* Number button grid */
+.numbox {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Style for number buttons */
+.num-button {
+    width: 80px;
+    height: 80px;
+    font-size: 30px;
+    font-weight: bold;
+    background-color: #1976D2;
+    color: #F5F5F5;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Button hover effect */
+.num-button:hover {
+    background-color: 42a5f5;
+    transform: scale(1.1);
+}
+
+/* Style for clear button */
+.clear_button {
+    width: 100%;
+    background-color: red;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 10px;
+}
+
+/* Hover effect for clear button */
+.clear_button:hover {
+    background-color: #B71C1C;
+    transform: scale(1.05);
+}
+
+/* Response output area */
+#echoed_txt {
+    font-size: 26px;
+    font-weight: bold;
+    color:rgb(25, 150, 252);
+    margin-top: 10px;
+}
+
+/* Scoreboard on results screen */
+.scoreboard {
+    background-color: #1E1E1E;
+    padding: 20px;
+    border-radius: 15px;
+    display: inline-block;
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.scoreboard p {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.correct-score {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.time-score {
+    color: #FFD700;
+    font-weight: bold;
+}
+
+.final-score {
+    color: #FF4500;
+    font-weight: bold;
+}
+
+/* General Button Styling */
+button {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+/* Primary Buttons */
+.jspsych-btn {
+    background-color: #007bff; /* Blue */
+    color: white;
+    border-radius: 10px;
+    min-width: 150px;
+}
+
+.jspsych-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
