@@ -432,12 +432,10 @@ var bds_response_screen = {
         
         // Reassign scoreElement after creating it
         scoreElement = document.getElementById("score-value");
-      }
-
-      
+      }    
     }
   },
-  on_finish: function(data) {
+  on_finish: async function(data) { // Make this function async
     var end_time = performance.now();
     var start_time = jsPsych.data.get().last(1).values()[0].start_time;
     var responseTime = end_time - start_time;
@@ -455,6 +453,9 @@ var bds_response_screen = {
       updateScore(totalScore); // Update score display
       console.log("✅ Correct! Score updated.");
       staircaseChecker[staircaseIndex] = 1;
+
+      // Submit score asynchronously
+      await submitScore("Player", totalScore);
     } else {
       console.log("❌ Incorrect.");
       staircaseChecker[staircaseIndex] = 0;
@@ -677,7 +678,7 @@ var results_screen = {
     let avgResponseTime = responseTimes.length > 0 
       ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(2) 
       : "N/A";
-    console.log("All Recorded Response Times in ms:", responseTimes);
+    // console.log("All Recorded Response Times in ms:", responseTimes);
 
     return `
       <h2>🎉 Task Complete! 🎉</h2>
@@ -688,10 +689,18 @@ var results_screen = {
           <p>🏆 <span class="final-score">Total Score:</span> ${totalScore}</p>
       </div>
       <p>📌 Did you know? Digit span tests help measure working memory capacity!</p>
-      <p>📢 Share your results with friends!</p>`;
+      <p>📢 Share your results with friends!</p>
+      <h2>🏆 Leaderboard</h2>
+      <div id="leaderboard">Loading leaderboard...</div>
+      `;
   },
   choices: ['Share Results', 'Continue'],
+  on_load: function() {
+    // Load the leaderboard when the results screen appears
+    loadLeaderboard();
+  },
   on_finish: function(data) {
+    
     if (data.response === 0) {
       alert('Share functionality coming soon!');
     }
@@ -726,5 +735,42 @@ var save_data = {
 timeline.push(save_data); //final screen asking about data
 
 //Initialize the Experiment
+
+async function submitScore(playerName, playerScore) {
+  try {
+      const response = await fetch("/.netlify/functions/leaderboard", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+              name: playerName,
+              score: playerScore,
+              country: Intl.DateTimeFormat().resolvedOptions().timeZone // Using timezone as an identifier
+          }),
+      });
+
+      return response.json(); // Return updated leaderboard
+  } catch (error) {
+      console.error("Error submitting score:", error);
+  }
+}
+
+
+
+async function loadLeaderboard() {
+  const response = await fetch("/.netlify/functions/leaderboard");
+  const leaderboard = await response.json();
+
+  let leaderboardHtml = "<ul style='list-style: none; padding: 0;'>";
+  leaderboard.forEach((entry, index) => {
+      leaderboardHtml += `<li style="font-size: 20px;">
+          🏅 ${index + 1}. <b>${entry.name}</b> - <span style="color: gold;">${entry.score}</span> (${entry.country})
+      </li>`;
+  });
+  leaderboardHtml += "</ul>";
+
+  document.getElementById("leaderboard").innerHTML = leaderboardHtml;
+}
+
+
 
 jsPsych.run(timeline);
