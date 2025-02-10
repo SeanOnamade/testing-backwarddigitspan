@@ -389,7 +389,25 @@ function updateScore(newScore) {
     scoreElement = document.getElementById("score-value");
   }
 
-  scoreElement.innerText = newScore;
+  let newScoreStr = newScore.toString().split("").map((digit, index) => 
+    `<span class="bounce-letter" style="animation-delay: ${index * 0.1}s">${digit}</span>`
+  ).join("");
+
+  scoreElement.innerHTML = newScoreStr;
+
+  // Apply scaling glow animation
+  scoreElement.classList.remove("score-update-effect");
+  void scoreElement.offsetWidth; // Forces reflow
+  scoreElement.classList.add("score-update-effect");
+
+  // Reset animation properly while keeping staggered effect
+  setTimeout(() => {
+    document.querySelectorAll(".bounce-letter").forEach((el, index) => {
+      el.style.animation = "none"; // Reset animation
+      void el.offsetWidth; // Force reflow
+      el.style.animation = `bounceUpDown 1s ease-in-out 2 ${index * 0.1}s`; // Reapply with staggered delay
+    });
+  }, 10);  // Small delay to ensure reset
 }
 
 
@@ -401,7 +419,22 @@ var bds_response_screen = {
   on_start: function() {
     jsPsych.data.addProperties({ start_time: performance.now() });
     if (totalScore === 0) {
-      updateScore(0);
+      let scoreElement = document.getElementById("score-value");
+
+      if (!scoreElement) {
+        console.warn("Score display not found! Trying to create it again...");
+        
+        // Try to create the score display dynamically
+        var scoreDisplay = document.createElement("div");
+        scoreDisplay.id = "score-display";
+        scoreDisplay.innerHTML = `Score: <span id="score-value">${0}</span>`;
+        document.body.appendChild(scoreDisplay);
+        
+        // Reassign scoreElement after creating it
+        scoreElement = document.getElementById("score-value");
+      }
+
+      
     }
   },
   on_finish: function(data) {

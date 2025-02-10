@@ -243,3 +243,26 @@ button {
     background-color: #0056b3;
     transform: scale(1.1);
 }
+
+/* Score update effect */
+.score-update-effect {
+    animation: scorePop 3s ease-in-out;
+}
+
+@keyframes scorePop {
+    0% { transform: scale(1); color: #FFD700; } /* Normal */
+    50% { transform: scale(1.4); color: #FFA500; } /* Enlarged & golden */
+    100% { transform: scale(1); color: white; } /* Back to normal */
+}
+
+/* Individual bouncing digits */
+.bounce-letter {
+    display: inline-block;
+    animation: bounceUpDown 1s ease-in-out 2; /* Runs twice */
+}
+
+@keyframes bounceUpDown {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-9px); } /* Moves up */
+    100% { transform: translateY(0); } /* Moves back */
+}
