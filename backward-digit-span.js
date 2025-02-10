@@ -91,12 +91,23 @@ var fileMap = {
 function recordClick(num) {
   response.push(num);
   document.getElementById("echoed_txt").innerHTML = response.join(", ");
+  let button = document.querySelector(`.num-button:nth-child(${num})`);
+  if (button) {
+    button.style.opacity = "0.5"; // Reduce opacity
+    button.style.pointerEvents = "none"; // Disable clicking again
+  }
 }
 
 // Function to clear the response array
+// accounted for undoing the opacity change in the keydown button presses
 function clearResponse() {
   response = [];
   document.getElementById("echoed_txt").innerHTML = "";
+  let buttons = document.querySelectorAll(".num-button");
+  buttons.forEach(button => {
+    button.style.opacity = "1";
+    button.style.pointerEvents = "auto"; // Allow clicking again
+  });
 }
 
 //function to map digit names to audio files (for auditory BDS)
@@ -201,11 +212,34 @@ document.addEventListener("keydown", function(event) {
   if (event.key >= "1" && event.key <= "9") {
     response.push(Number(event.key));
     document.getElementById("echoed_txt").innerHTML = response.join(", ");
-  } else if (event.key === "Backspace") {
-    response.pop();
+    let button = document.querySelector(`.num-button:nth-child(${event.key})`);
+    if (button) {
+      button.style.opacity = "0.5"; // Reduce opacity
+      button.style.pointerEvents = "none"; // Disable clicking again
+    }
+  } else if (event.key === "Backspace" && response.length > 0) {
+    let lastRemoved = response.pop(); // Get the last number removed
     document.getElementById("echoed_txt").innerHTML = response.join(", ");
+
+    // Restore ONLY the last removed button
+    let button = document.querySelector(`.num-button:nth-child(${lastRemoved})`);
+    if (button) {
+      button.style.opacity = "1";
+      button.style.pointerEvents = "auto"; // Allow clicking again
+      button.removeAttribute("data-used"); // Remove usage mark
+    }
   }
 });
+
+window.onload = function () {
+  // Create score display and add it to the page dynamically
+  var scoreDisplay = document.createElement("div");
+  scoreDisplay.id = "score-display";
+  scoreDisplay.innerHTML = `Score: <span id="score-value">0</span>`;
+  document.body.appendChild(scoreDisplay);
+};
+
+
 
 //From the Experiment Factory Repository
 var response_grid = `
@@ -339,6 +373,26 @@ if(useAudio){
   }
 };
 
+function updateScore(newScore) {
+  let scoreElement = document.getElementById("score-value");
+
+  if (!scoreElement) {
+    console.warn("Score display not found! Trying to create it again...");
+    
+    // Try to create the score display dynamically
+    var scoreDisplay = document.createElement("div");
+    scoreDisplay.id = "score-display";
+    scoreDisplay.innerHTML = `Score: <span id="score-value">${newScore}</span>`;
+    document.body.appendChild(scoreDisplay);
+    
+    // Reassign scoreElement after creating it
+    scoreElement = document.getElementById("score-value");
+  }
+
+  scoreElement.innerText = newScore;
+}
+
+
 //response screen
 var bds_response_screen = {
   type: jsPsychHtmlKeyboardResponse,
@@ -346,30 +400,35 @@ var bds_response_screen = {
   choices: ['Enter'],
   on_start: function() {
     jsPsych.data.addProperties({ start_time: performance.now() });
+    if (totalScore === 0) {
+      updateScore(0);
+    }
   },
-  on_finish: function(data){
+  on_finish: function(data) {
     var end_time = performance.now();
     var start_time = jsPsych.data.get().last(1).values()[0].start_time;
     var responseTime = end_time - start_time;
-    responseTimes.push(responseTime); // Store response time
+    responseTimes.push(responseTime);
     console.log("Response Time Recorded:", responseTime, "ms");
 
     var score = calculateScore(responseTime);
 
     var curans = response;
     var corans = bds_correct_ans;
-    if(JSON.stringify(curans) === JSON.stringify(corans)) {
-      var gotItRight = 1;
-      totalScore += score;
-      console.log("correct");
+    var gotItRight = JSON.stringify(curans) === JSON.stringify(corans) ? 1 : 0;
+
+    if (gotItRight) {
+      totalScore += score; // Add score ONLY if correct
+      updateScore(totalScore); // Update score display
+      console.log("✅ Correct! Score updated.");
       staircaseChecker[staircaseIndex] = 1;
     } else {
-      var gotItRight = 0;
-      console.log("incorrect");
+      console.log("❌ Incorrect.");
       staircaseChecker[staircaseIndex] = 0;
     }
-    response = []; //clear the response for the next trial
-    staircaseIndex += 1; //update the staircase index
+
+    response = []; // Clear response
+    staircaseIndex += 1; // Update staircase
     console.log(staircaseChecker);
 
     jsPsych.data.addDataToLastTrial({
@@ -536,6 +595,25 @@ var tutorial_sequence = {
   timeline: [tutorial_intro, tutorial_sequence_loop, tutorial_response_screen, tutorial_feedback]
 };
 
+var welcome_screen = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+  <div class = "welcome-container">
+      <h1 class = "fade-in slide-up" style="font-size: 36px; font-weight: bold;">🧠 Welcome to the Digit Span Task! 🔢</h1>
+      <p class = "fade-in slide-up" style="font-size: 22px; max-width: 700px; margin: auto;">
+        Your goal is to <b style="color: red";> memorize and recall </b> numbers in <b style="color: red";>reverse order</b>. 
+        This test measures your working memory and attention.
+      </p>
+      <p class = "fade-in slide-up" style="font-size: 20px; color:rgb(0, 187, 6); font-weight: bold;">
+        Press "Start" when you're ready!
+      </p>
+    </div>
+  `,
+  choices: ['Start'],
+  button_html: '<button class="fade-in slide-up start-btn">%choice%</button>'
+};
+
+
 /******/
 
 /////////////////////////
@@ -548,7 +626,13 @@ e.g., timeline.push(fds_adaptive)
 */
 
 var bds_adaptive = {
-  timeline: [preload_digits, fullscreen_trial, tutorial_sequence, bds_welcome, bds_mainproc, bds_wrapup]
+  timeline: [preload_digits, 
+    fullscreen_trial, 
+    welcome_screen,
+    tutorial_sequence, 
+    bds_welcome, 
+    bds_mainproc, 
+    bds_wrapup]
 };
 
 
