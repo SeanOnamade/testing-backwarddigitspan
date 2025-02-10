@@ -49,9 +49,13 @@ exports.handler = async (event) => {
             saveLeaderboard(leaderboard);
 
             return { statusCode: 200, body: JSON.stringify(leaderboard) };
-        } catch (error) {
-            return { statusCode: 500, body: "Server error." };
-        }
+        }  catch (error) {
+            return {
+              statusCode: 500,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ error: "Server error", details: error.message }),
+            };
+          }
     }
 
     return { statusCode: 405, body: "Method Not Allowed" };
