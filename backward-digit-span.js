@@ -715,15 +715,17 @@ var results_screen = {
 
     let submitButton = document.getElementById("submit-score");
     let inputBox = document.getElementById("player-initials");
+
     if (submitButton && inputBox) {
         submitButton.addEventListener("click", function() {
             submitScore(); // Only submits score when button is clicked
-        });
+        }, { once: true });  // ✅ Ensures it only runs ONCE
     } else {
         console.error("Submit button or input box not found!");
     }
 
     document.getElementById("reset-leaderboard").addEventListener("click", function() {
+        localStorage.removeItem("playerId");  // ✅ Clears player ID when resetting
         resetLeaderboard();
     });
   },
@@ -765,7 +767,12 @@ timeline.push(save_data); //final screen asking about data
 //Initialize the Experiment
 
 function getPlayerId() {
-  return `player-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  let storedId = localStorage.getItem("playerId");
+  if (!storedId) {
+      storedId = `player-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      localStorage.setItem("playerId", storedId);
+  }
+  return storedId;
 }
 
 
@@ -784,7 +791,7 @@ function submitScore() {
   }
 
   let playerData = {
-      playerId: getPlayerId(), // Unique per session
+      playerId: getPlayerId(), // Persistent player ID
       name: initials,
       score: totalScore,
       country: Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -802,8 +809,6 @@ function submitScore() {
   })
   .catch(error => console.error("Error updating leaderboard:", error));
 }
-
-
 
 
 
