@@ -756,22 +756,32 @@ timeline.push(save_data); //final screen asking about data
 
 //Initialize the Experiment
 
+function getPlayerId() {
+  let playerId = localStorage.getItem("playerId");
+  if (!playerId) {
+      playerId = "player_" + Math.random().toString(36).substr(2, 9); // Generate random ID
+      localStorage.setItem("playerId", playerId);
+  }
+  return playerId;
+}
+
 function submitScore(initials) {
   let playerData = {
-    name: initials,
-    score: totalScore,
-    country: Intl.DateTimeFormat().resolvedOptions().timeZone
+      playerId: getPlayerId(), // Unique per device
+      name: initials,  
+      score: totalScore,
+      country: Intl.DateTimeFormat().resolvedOptions().timeZone
   };
 
   fetch("/.netlify/functions/leaderboard", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(playerData)
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(playerData)
   })
   .then(response => response.json())
   .then(data => {
-    console.log("Leaderboard updated:", data);
-    fetchLeaderboard(); // ✅ Update leaderboard immediately after submission
+      console.log("Leaderboard updated:", data);
+      fetchLeaderboard(); // Refresh leaderboard
   })
   .catch(error => console.error("Error updating leaderboard:", error));
 }

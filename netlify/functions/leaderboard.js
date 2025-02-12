@@ -12,14 +12,14 @@ exports.handler = async (event) => {
     if (event.httpMethod === "POST") {
         try {
             const body = JSON.parse(event.body);
-            const { score, name, country } = body;
+            const { score, name, country, playerId } = body;
 
-            if (!score || !name) {
-                return { statusCode: 400, body: "Missing score or name." };
+            if (!score || !name || !playerId) {
+                return { statusCode: 400, body: "Missing score, name, or playerId." };
             }
 
-            // Check if the player already exists
-            let existingPlayerIndex = leaderboard.findIndex(entry => entry.name === name);
+            // Check if the player already exists (same playerId)
+            let existingPlayerIndex = leaderboard.findIndex(entry => entry.playerId === playerId);
 
             if (existingPlayerIndex !== -1) {
                 // Update score if the new one is higher
@@ -28,7 +28,7 @@ exports.handler = async (event) => {
                 }
             } else {
                 // Add new entry
-                leaderboard.push({ name, score, country });
+                leaderboard.push({ playerId, name, score, country });
             }
 
             // Sort and keep top 3 only
@@ -56,6 +56,5 @@ exports.handler = async (event) => {
         };
     }
     
-
     return { statusCode: 405, body: "Method Not Allowed" };
 };
