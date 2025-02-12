@@ -278,12 +278,12 @@ button {
     text-align: center;
     box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
 } */
-.leaderboard-container {
-    background: rgba(255, 255, 255, 0.1);
+.score-summary, .leaderboard-container, .submission-container, .button-row, .reset-container {
+    background: rgba(255, 255, 255, 0.05);
     padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 20px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    /* text-align: center; */
   }
 /* 
 .leaderboard-title {
@@ -385,13 +385,13 @@ button {
   }
 
 .results-container {
+    max-width: 600px;
+    margin: auto;
     text-align: center;
     background: #1e1e1e;
     color: white;
     padding: 20px;
     border-radius: 10px;
-    max-width: 600px;
-    margin: auto;
     box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease-in-out;
 }
@@ -413,3 +413,63 @@ line-height: 1.5;
 .accuracy-score { color: #ff5e5e; }
 .time-score { color: #ffcc00; }
 .final-score { color: #ff8400; }
+
+
+#player-initials {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    text-transform: uppercase;
+    font-size: 16px;
+    text-align: center;
+    width: 100px;
+  }
+  
+  .submit-btn {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  .button-row {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+  }
+  
+  .secondary-btn {
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .reset-container {
+    text-align: center;
+  }
+  
+  .reset-btn {
+    background-color: red;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 600px) {
+    .button-row {
+      flex-direction: column;
+    }
+    .secondary-btn {
+      margin-bottom: 5px;
+    }
+  }

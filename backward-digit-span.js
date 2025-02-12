@@ -690,35 +690,40 @@ var results_screen = {
     };
 
     return `
-      <div class="results-container">
-        <h2 class="results-title">🎉 Task Complete! 🎉</h2>
-        
-        <div class="scoreboard">
-          <p>✅ <span class="correct-score">Correct Answers:</span> <b>${totalCorrect} / ${bdsTotalTrials}</b></p>
-          <p>🎯 <span class="accuracy-score">Accuracy:</span> <b>${(totalCorrect / bdsTotalTrials * 100).toFixed(2)}%</b></p>
+       <div class="results-container">
+        <h2>🎉 Task Complete! 🎉</h2>
+
+        <div class="score-summary">
+          <p>✅ <span class="correct-score">Correct Answers:</span> ${totalCorrect} / ${bdsTotalTrials}</p>
+          <p>🎯 <span class="correct-score">Accuracy:</span> ${(totalCorrect / bdsTotalTrials * 100).toFixed(2)}%</p>
           <p>⏳ <span class="time-score">Avg. Response Time:</span> <b>${(avgResponseTime / 1000).toFixed(2)} seconds</b></p>
-          <p>🏆 <span class="final-score">Total Score:</span> <b>${totalScore}</b></p>
+          <p>🏆 <span class="final-score">Total Score:</span> ${totalScore}</p>
         </div>
 
         <div class="leaderboard-container">
-          <h3 class="leaderboard-title">🏆 Leaderboard</h3>
+          <h3>🏆 <span class="leaderboard-title">Leaderboard</span></h3>
           <div id="leaderboard"></div>
         </div>
 
-        <div class="initials-container">
+        <div class="submission-container">
           <h3>Enter Your Initials:</h3>
-          <input type="text" id="player-initials" maxlength="3" placeholder="ABC" class="initials-input">
-          <button id="submit-score" class="submit-score-btn">Submit Score</button>
+          <input type="text" id="player-initials" maxlength="3" placeholder="ABC">
+          <button id="submit-score" class="submit-btn">Submit Score</button>
         </div>
 
-        <div class="testing-tools">
-          <h3>⚠️ Testing Only: Reset Leaderboard</h3>
-          <button id="reset-leaderboard" class="reset-leaderboard-btn">Reset Leaderboard</button>
+        <div class="button-row">
+          <button id="share-results" class="secondary-btn">Share Results</button>
+          <button id="continue" class="secondary-btn">Continue</button>
+        </div>
+
+        <div class="reset-container">
+          <h4>⚠️ Testing Only: Reset Leaderboard</h4>
+          <button id="reset-leaderboard" class="reset-btn">Reset Leaderboard</button>
         </div>
       </div>
     `;
   },
-  choices: ['Share Results', 'Continue'],
+  choices: [],
   on_load: function() {
     fetchLeaderboard(); // Load leaderboard at the start
 
@@ -734,6 +739,14 @@ var results_screen = {
 
     document.getElementById("reset-leaderboard").addEventListener("click", function() {
       resetLeaderboard();
+    });
+
+    document.getElementById("share-results").addEventListener("click", function() {
+      alert("Share functionality coming soon!");
+    });
+
+    document.getElementById("continue").addEventListener("click", function() {
+      jsPsych.finishTrial();
     });
   },
   on_finish: function(data) {
