@@ -681,11 +681,10 @@ var results_screen = {
     let avgResponseTime = responseTimes.length > 0 
       ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(2) 
       : "N/A";
-    // console.log("All Recorded Response Times in ms:", responseTimes);
 
     pendingScore = {
       playerId: `player-${Date.now()}-${Math.floor(Math.random() * 1000)}`, 
-      name: "", // Empty until they enter initials
+      name: "", 
       score: totalScore,
       country: Intl.DateTimeFormat().resolvedOptions().timeZone
     };
@@ -719,8 +718,6 @@ var results_screen = {
       </div>
     `;
   },
-  // <p>📌 Did you know? Digit span tests help measure working memory capacity!</p>
-  // <p>📢 Share your results with friends!</p>
   choices: ['Share Results', 'Continue'],
   on_load: function() {
     fetchLeaderboard(); // Load leaderboard at the start
@@ -730,22 +727,22 @@ var results_screen = {
 
     if (submitButton && inputBox) {
       submitButton.addEventListener("click", function() {
-          submitScore();
-          submitButton.disabled = true; // Prevent multiple submissions
+        submitScore();
+        submitButton.disabled = true; // Prevent multiple submissions
       }, { once: true });
     }
 
     document.getElementById("reset-leaderboard").addEventListener("click", function() {
-        resetLeaderboard();
+      resetLeaderboard();
     });
   },
   on_finish: function(data) {
-    
     if (data.response === 0) {
       alert('Share functionality coming soon!');
     }
   }
 };
+
 timeline.push(results_screen);
 
 
