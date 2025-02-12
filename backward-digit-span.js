@@ -614,7 +614,7 @@ var tutorial_feedback = {
     if (last_trial.correct) {
       return `<p style="color:white; font-size:26px;">✅ Correct! Now let's move on to the real trials.</p>`;
     } else {
-      return `<p style="color:white; font-size:26px;">❌ Incorrect! You should have typed: <b>${tutorial_correct_ans.join(", ")}</b>.</p>
+      return `<p style="color:white; font-size:26px;">❌ Incorrect! You should have typed: <b>${tutorial_correct_ans.join(", ")}</b> because the shown order was 1, 2, 3.</p>
               <p>That's okay! Let's move on to the real trials.</p>`;
     }
   },
@@ -689,11 +689,13 @@ var results_screen = {
           <p>⏳ <span class="time-score">Avg. Response Time:</span> <b>${(avgResponseTime / 1000).toFixed(2)} seconds</b></p>
           <p>🏆 <span class="final-score">Total Score:</span> ${totalScore}</p>
       </div>
-      <h3>🏆 Leaderboard</h3>
       <div id="leaderboard"></div>
       <h3>Enter Your Initials:</h3>
       <input type="text" id="player-initials" maxlength="3" placeholder="ABC" style="text-transform:uppercase;">
       <button id="submit-score">Submit Score</button>
+
+      <h3>⚠️ Testing Only: Reset Leaderboard</h3>
+      <button id="reset-leaderboard" style="background:red; color:white; padding:5px;">Reset Leaderboard</button>
       `;
   },
   // <p>📌 Did you know? Digit span tests help measure working memory capacity!</p>
@@ -712,6 +714,9 @@ var results_screen = {
       } else {
         alert("Please enter exactly 3 letters (A-Z).");
       }
+    });
+    document.getElementById("reset-leaderboard").addEventListener("click", function() {
+      resetLeaderboard();
     });
   },
   on_finish: function(data) {
@@ -797,6 +802,18 @@ function fetchLeaderboard() {
     })
     .catch(error => console.error("Error fetching leaderboard:", error));
 }
+
+function resetLeaderboard() {
+  fetch("/.netlify/functions/leaderboard", { method: "DELETE" })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.message);
+      alert("Leaderboard reset successfully!");
+      fetchLeaderboard(); // Reload leaderboard to show it's cleared
+    })
+    .catch(error => console.error("Error resetting leaderboard:", error));
+}
+
 
 
 
