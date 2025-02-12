@@ -718,14 +718,15 @@ var results_screen = {
 
     if (submitButton && inputBox) {
         submitButton.addEventListener("click", function() {
-            submitScore(); // Only submits score when button is clicked
-        }, { once: true });  // ✅ Ensures it only runs ONCE
+            submitScore(); // ✅ Runs only once per click
+        }, { once: true });
     } else {
-        console.error("Submit button or input box not found!");
+        console.error("Submit button or input box not found! Retrying...");
+        setTimeout(on_load, 500); // ✅ Wait and retry
     }
 
     document.getElementById("reset-leaderboard").addEventListener("click", function() {
-        localStorage.removeItem("playerId");  // ✅ Clears player ID when resetting
+        localStorage.removeItem("playerId"); // ✅ Clears persistent ID
         resetLeaderboard();
     });
   },
@@ -778,9 +779,10 @@ function getPlayerId() {
 
 function submitScore() {
   let inputBox = document.getElementById("player-initials");
-  
+
   if (!inputBox) {
-      console.error("Initials input box not found!");
+      console.error("Initials input box not found! Delaying execution...");
+      setTimeout(submitScore, 500); // ✅ Wait and retry
       return;
   }
 
@@ -797,10 +799,12 @@ function submitScore() {
       country: Intl.DateTimeFormat().resolvedOptions().timeZone
   };
 
+  console.log("Submitting Score:", playerData); // Debugging log
+
   fetch("/.netlify/functions/leaderboard", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(playerData)
+      body: JSON.stringify(playerData) // ✅ Ensure valid JSON
   })
   .then(response => response.json())
   .then(data => {
@@ -809,6 +813,7 @@ function submitScore() {
   })
   .catch(error => console.error("Error updating leaderboard:", error));
 }
+
 
 
 
