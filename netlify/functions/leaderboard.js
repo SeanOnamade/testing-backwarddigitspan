@@ -18,31 +18,27 @@ exports.handler = async (event) => {
                 return { statusCode: 400, body: JSON.stringify({ error: "Missing required fields." }) };
             }
 
-            // Validate JSON before storing
             if (typeof score !== "number" || typeof name !== "string" || typeof playerId !== "string") {
                 return { statusCode: 400, body: JSON.stringify({ error: "Invalid data format." }) };
             }
 
-            // Check if the player already exists
+            // Prevent duplicate names in leaderboard
             let existingPlayerIndex = leaderboard.findIndex(entry => entry.playerId === playerId);
 
             if (existingPlayerIndex !== -1) {
-                // Update score only if higher
                 if (score > leaderboard[existingPlayerIndex].score) {
                     leaderboard[existingPlayerIndex].score = score;
                 } else {
                     return { statusCode: 400, body: JSON.stringify({ error: "Duplicate entry: Score not higher than previous." }) };
                 }
             } else {
-                // Add new entry
                 leaderboard.push({ playerId, name, score, country });
             }
 
-            // Sort and keep top 3 only
+            // Sort and keep top 3
             leaderboard.sort((a, b) => b.score - a.score);
             leaderboard = leaderboard.slice(0, 3);
 
-            // Store leaderboard
             process.env.LEADERBOARD = JSON.stringify(leaderboard);
 
             return { statusCode: 200, body: JSON.stringify(leaderboard) };
@@ -57,10 +53,7 @@ exports.handler = async (event) => {
 
     if (event.httpMethod === "DELETE") {
         process.env.LEADERBOARD = JSON.stringify([]);
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: "Leaderboard reset successfully." }),
-        };
+        return { statusCode: 200, body: JSON.stringify({ message: "Leaderboard reset successfully." }) };
     }
 
     return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };

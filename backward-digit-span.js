@@ -455,7 +455,7 @@ var bds_response_screen = {
       staircaseChecker[staircaseIndex] = 1;
 
       // Submit score asynchronously
-      await submitScore("Player", totalScore);
+      // await submitScore("Player", totalScore);
     } else {
       console.log("❌ Incorrect.");
       staircaseChecker[staircaseIndex] = 0;
@@ -684,7 +684,7 @@ var results_screen = {
     // console.log("All Recorded Response Times in ms:", responseTimes);
 
     pendingScore = {
-      playerId: getPlayerId(),
+      playerId: `player-${Date.now()}-${Math.floor(Math.random() * 1000)}`, 
       name: "", // Empty until they enter initials
       score: totalScore,
       country: Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -717,16 +717,13 @@ var results_screen = {
     let inputBox = document.getElementById("player-initials");
 
     if (submitButton && inputBox) {
-        submitButton.addEventListener("click", function() {
-            submitScore(); // ✅ Runs only once per click
-        }, { once: true });
-    } else {
-        console.error("Submit button or input box not found! Retrying...");
-        setTimeout(on_load, 500); // ✅ Wait and retry
+      submitButton.addEventListener("click", function() {
+          submitScore();
+          submitButton.disabled = true; // Prevent multiple submissions
+      }, { once: true });
     }
 
     document.getElementById("reset-leaderboard").addEventListener("click", function() {
-        localStorage.removeItem("playerId"); // ✅ Clears persistent ID
         resetLeaderboard();
     });
   },
@@ -779,10 +776,8 @@ function getPlayerId() {
 
 function submitScore() {
   let inputBox = document.getElementById("player-initials");
-
   if (!inputBox) {
-      console.error("Initials input box not found! Delaying execution...");
-      setTimeout(submitScore, 500); // ✅ Wait and retry
+      console.error("Initials input box not found!");
       return;
   }
 
@@ -792,24 +787,17 @@ function submitScore() {
       return;
   }
 
-  let playerData = {
-      playerId: getPlayerId(), // Persistent player ID
-      name: initials,
-      score: totalScore,
-      country: Intl.DateTimeFormat().resolvedOptions().timeZone
-  };
-
-  console.log("Submitting Score:", playerData); // Debugging log
+  pendingScore.name = initials; // Store initials in pending score
 
   fetch("/.netlify/functions/leaderboard", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(playerData) // ✅ Ensure valid JSON
+      body: JSON.stringify(pendingScore)
   })
   .then(response => response.json())
   .then(data => {
       console.log("Leaderboard updated:", data);
-      fetchLeaderboard(); // Refresh leaderboard
+      fetchLeaderboard();
   })
   .catch(error => console.error("Error updating leaderboard:", error));
 }
@@ -827,16 +815,11 @@ function fetchLeaderboard() {
         return;
       }
 
-      let leaderboardHTML = `
-        <div class="leaderboard-container">
-          <div class="leaderboard-title">🏆 Leaderboard</div>
-          ${data.map((entry, index) => `
-            <p class="leaderboard-entry rank-${index + 1}">
-              🏅 ${index + 1}. <b>${entry.name}</b> - <span>${entry.score}</span> (${entry.country})
-            </p>
-          `).join("")}
-        </div>
-      `;
+      let leaderboardHTML = data.map((entry, index) => `
+        <p>
+          🏅 ${index + 1}. <b>${entry.name}</b> - <span>${entry.score}</span> (${entry.country})
+        </p>
+      `).join("");
 
       leaderboardElement.innerHTML = leaderboardHTML;
     })
