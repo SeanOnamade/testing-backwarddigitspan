@@ -691,21 +691,33 @@ var results_screen = {
     };
 
     return `
-      <h2>🎉 Task Complete! 🎉</h2>
-      <div class="scoreboard">
-          <p>✅ <span class="correct-score">Correct Answers:</span> ${totalCorrect} / ${bdsTotalTrials}</p>
-          <p>🎯 <span class="correct-score">Accuracy:</span> ${(totalCorrect / bdsTotalTrials * 100).toFixed(2)}%</p>
+      <div class="results-container">
+        <h2 class="results-title">🎉 Task Complete! 🎉</h2>
+        
+        <div class="scoreboard">
+          <p>✅ <span class="correct-score">Correct Answers:</span> <b>${totalCorrect} / ${bdsTotalTrials}</b></p>
+          <p>🎯 <span class="accuracy-score">Accuracy:</span> <b>${(totalCorrect / bdsTotalTrials * 100).toFixed(2)}%</b></p>
           <p>⏳ <span class="time-score">Avg. Response Time:</span> <b>${(avgResponseTime / 1000).toFixed(2)} seconds</b></p>
-          <p>🏆 <span class="final-score">Total Score:</span> ${totalScore}</p>
-      </div>
-      <div id="leaderboard"></div>
-      <h3>Enter Your Initials:</h3>
-      <input type="text" id="player-initials" maxlength="3" placeholder="ABC" style="text-transform:uppercase;">
-      <button id="submit-score">Submit Score</button>
+          <p>🏆 <span class="final-score">Total Score:</span> <b>${totalScore}</b></p>
+        </div>
 
-      <h3>⚠️ Testing Only: Reset Leaderboard</h3>
-      <button id="reset-leaderboard" style="background:red; color:white; padding:5px;">Reset Leaderboard</button>
-      `;
+        <div class="leaderboard-container">
+          <h3 class="leaderboard-title">🏆 Leaderboard</h3>
+          <div id="leaderboard"></div>
+        </div>
+
+        <div class="initials-container">
+          <h3>Enter Your Initials:</h3>
+          <input type="text" id="player-initials" maxlength="3" placeholder="ABC" class="initials-input">
+          <button id="submit-score" class="submit-score-btn">Submit Score</button>
+        </div>
+
+        <div class="testing-tools">
+          <h3>⚠️ Testing Only: Reset Leaderboard</h3>
+          <button id="reset-leaderboard" class="reset-leaderboard-btn">Reset Leaderboard</button>
+        </div>
+      </div>
+    `;
   },
   // <p>📌 Did you know? Digit span tests help measure working memory capacity!</p>
   // <p>📢 Share your results with friends!</p>

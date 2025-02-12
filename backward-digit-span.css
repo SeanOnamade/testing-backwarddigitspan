@@ -128,7 +128,7 @@ p {
 }
 
 /* Scoreboard on results screen */
-.scoreboard {
+/* .scoreboard {
     background-color: #1E1E1E;
     padding: 20px;
     border-radius: 15px;
@@ -141,9 +141,9 @@ p {
 .scoreboard p {
     font-size: 20px;
     margin: 10px 0;
-}
+} */
 
-.correct-score {
+/* .correct-score {
     color: #4CAF50;
     font-weight: bold;
 }
@@ -156,7 +156,7 @@ p {
 .final-score {
     color: #FF4500;
     font-weight: bold;
-}
+} */
 
 /* General Button Styling */
 button {
@@ -268,8 +268,8 @@ button {
 }
 
 /* Leaderboard Styles */
-.leaderboard-container {
-    background: rgba(255, 255, 255, 0.1); /* Subtle transparent background */
+/* .leaderboard-container {
+    background: rgba(255, 255, 255, 0.1);
     padding: 15px;
     border-radius: 10px;
     width: 80%;
@@ -277,15 +277,24 @@ button {
     margin: 15px auto;
     text-align: center;
     box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
-}
-
+} */
+.leaderboard-container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+/* 
 .leaderboard-title {
     font-size: 22px;
     font-weight: bold;
-    color: #FFD700; /* Gold Title */
+    color: #FFD700; 
     text-shadow: 1px 1px 10px rgba(255, 215, 0, 0.5);
     margin-bottom: 10px;
-}
+} */
+
+
 
 .leaderboard-entry {
     font-size: 18px;
@@ -303,3 +312,104 @@ button {
 .rank-1 { color: gold; font-weight: bold; }
 .rank-2 { color: silver; font-weight: bold; }
 .rank-3 { color: #cd7f32; font-weight: bold; } /* Bronze */
+
+.results-container {
+    text-align: center;
+    background: #1e1e1e;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+.leaderboard-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffcc00;
+  }
+  
+  #leaderboard p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin: 5px 0;
+  }
+  
+  /* Initials Input */
+  .initials-container {
+    margin-bottom: 15px;
+  }
+  
+  .initials-input {
+    padding: 10px;
+    font-size: 18px;
+    border: 2px solid #ffcc00;
+    border-radius: 5px;
+    text-align: center;
+    text-transform: uppercase;
+    background: black;
+    color: white;
+  }
+  
+  .submit-score-btn {
+    padding: 10px 15px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #ffcc00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+  }
+  
+  .submit-score-btn:hover {
+    background: #ff8400;
+  }
+  
+  /* Reset Button */
+  .reset-leaderboard-btn {
+    background: red;
+    color: white;
+    font-size: 16px;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+  }
+  
+  .reset-leaderboard-btn:hover {
+    background: darkred;
+  }
+
+.results-container {
+    text-align: center;
+    background: #1e1e1e;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+.scoreboard {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+    margin-bottom: 20px;
+  }
+  
+.scoreboard p {
+font-size: 18px;
+line-height: 1.5;
+}
+
+.correct-score { color: #36ff57; }
+.accuracy-score { color: #ff5e5e; }
+.time-score { color: #ffcc00; }
+.final-score { color: #ff8400; }
