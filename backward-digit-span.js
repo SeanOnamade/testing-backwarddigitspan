@@ -689,16 +689,15 @@ var results_screen = {
           <p>⏳ <span class="time-score">Avg. Response Time:</span> <b>${(avgResponseTime / 1000).toFixed(2)} seconds</b></p>
           <p>🏆 <span class="final-score">Total Score:</span> ${totalScore}</p>
       </div>
-      <p>📌 Did you know? Digit span tests help measure working memory capacity!</p>
-      <p>📢 Share your results with friends!</p>
       <h3>🏆 Leaderboard</h3>
       <div id="leaderboard"></div>
-
       <h3>Enter Your Initials:</h3>
       <input type="text" id="player-initials" maxlength="3" placeholder="ABC" style="text-transform:uppercase;">
       <button id="submit-score">Submit Score</button>
       `;
   },
+  // <p>📌 Did you know? Digit span tests help measure working memory capacity!</p>
+  // <p>📢 Share your results with friends!</p>
   choices: ['Share Results', 'Continue'],
   on_load: function() {
     fetchLeaderboard(); // Load leaderboard at the start
@@ -777,13 +776,29 @@ function fetchLeaderboard() {
   fetch("/.netlify/functions/leaderboard")
     .then(response => response.json())
     .then(data => {
-      let leaderboardHTML = data.map((entry, index) => 
-        `<p>🥇 ${index + 1}. ${entry.name} - ${entry.score} (${entry.country})</p>`
-      ).join("");
-      document.getElementById("leaderboard").innerHTML = leaderboardHTML;
+      let leaderboardElement = document.getElementById("leaderboard");
+      if (!leaderboardElement) {
+        console.warn("Leaderboard element not found!");
+        return;
+      }
+
+      let leaderboardHTML = `
+        <div class="leaderboard-container">
+          <div class="leaderboard-title">🏆 Leaderboard</div>
+          ${data.map((entry, index) => `
+            <p class="leaderboard-entry rank-${index + 1}">
+              🏅 ${index + 1}. <b>${entry.name}</b> - <span>${entry.score}</span> (${entry.country})
+            </p>
+          `).join("")}
+        </div>
+      `;
+
+      leaderboardElement.innerHTML = leaderboardHTML;
     })
     .catch(error => console.error("Error fetching leaderboard:", error));
 }
+
+
 
 
 

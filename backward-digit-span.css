@@ -266,3 +266,40 @@ button {
     50% { transform: translateY(-9px); } /* Moves up */
     100% { transform: translateY(0); } /* Moves back */
 }
+
+/* Leaderboard Styles */
+.leaderboard-container {
+    background: rgba(255, 255, 255, 0.1); /* Subtle transparent background */
+    padding: 15px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 400px;
+    margin: 15px auto;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+}
+
+.leaderboard-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #FFD700; /* Gold Title */
+    text-shadow: 1px 1px 10px rgba(255, 215, 0, 0.5);
+    margin-bottom: 10px;
+}
+
+.leaderboard-entry {
+    font-size: 18px;
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px 0;
+    transition: transform 0.3s ease-in-out;
+}
+
+.leaderboard-entry:hover {
+    transform: scale(1.05);
+}
+
+/* Rank Colors */
+.rank-1 { color: gold; font-weight: bold; }
+.rank-2 { color: silver; font-weight: bold; }
+.rank-3 { color: #cd7f32; font-weight: bold; } /* Bronze */
