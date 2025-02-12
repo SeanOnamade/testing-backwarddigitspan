@@ -768,15 +768,25 @@ timeline.push(save_data); //final screen asking about data
 //Initialize the Experiment
 
 function getPlayerId() {
-  let playerId = localStorage.getItem("playerId");
-  if (!playerId) {
-      playerId = "player_" + Math.random().toString(36).substr(2, 9); // Generate random ID
-      localStorage.setItem("playerId", playerId);
-  }
-  return playerId;
+  return `player-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 }
 
-function submitScore(playerData) {
+
+function submitScore() {
+  let initials = document.getElementById("player-initials").value.toUpperCase().trim();
+
+  if (!/^[A-Z]{3}$/.test(initials)) {
+      alert("Please enter exactly 3 letters (A-Z).");
+      return;
+  }
+
+  let playerData = {
+      playerId: getPlayerId(),  // Ensure we send playerId
+      name: initials,
+      score: totalScore,
+      country: Intl.DateTimeFormat().resolvedOptions().timeZone
+  };
+
   fetch("/.netlify/functions/leaderboard", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -789,6 +799,7 @@ function submitScore(playerData) {
   })
   .catch(error => console.error("Error updating leaderboard:", error));
 }
+
 
 
 
