@@ -462,6 +462,7 @@ var bds_response_screen = {
     }
 
     response = []; // Clear response
+    console.log("response cleared")
     staircaseIndex += 1; // Update staircase
     console.log(staircaseChecker);
 
