@@ -17,13 +17,11 @@ function saveLeaderboard(data) {
 }
 
 exports.handler = async (event) => {
-    let leaderboard = JSON.parse(process.env.LEADERBOARD || "[]");
-
     if (event.httpMethod === "GET") {
         return {
             statusCode: 200,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(leaderboard),
+            body: JSON.stringify(loadLeaderboard()),
         };
     }
 
@@ -36,6 +34,9 @@ exports.handler = async (event) => {
                 return { statusCode: 400, body: "Missing score or name." };
             }
 
+            // Load existing leaderboard
+            let leaderboard = loadLeaderboard();
+
             // Add new entry
             leaderboard.push({ name, score, country });
 
@@ -43,8 +44,8 @@ exports.handler = async (event) => {
             leaderboard.sort((a, b) => b.score - a.score);
             leaderboard = leaderboard.slice(0, 3);
 
-            // Convert leaderboard to a string and store it
-            process.env.LEADERBOARD = JSON.stringify(leaderboard);
+            // Save updated leaderboard
+            saveLeaderboard(leaderboard);
 
             return { statusCode: 200, body: JSON.stringify(leaderboard) };
         } catch (error) {
@@ -58,4 +59,3 @@ exports.handler = async (event) => {
 
     return { statusCode: 405, body: "Method Not Allowed" };
 };
-

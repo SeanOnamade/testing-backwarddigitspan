@@ -691,14 +691,29 @@ var results_screen = {
       </div>
       <p>📌 Did you know? Digit span tests help measure working memory capacity!</p>
       <p>📢 Share your results with friends!</p>
-      <h2>🏆 Leaderboard</h2>
-      <div id="leaderboard">Loading leaderboard...</div>
+      <h3>🏆 Leaderboard</h3>
+      <div id="leaderboard"></div>
+
+      <h3>Enter Your Initials:</h3>
+      <input type="text" id="player-initials" maxlength="3" placeholder="ABC" style="text-transform:uppercase;">
+      <button id="submit-score">Submit Score</button>
       `;
   },
   choices: ['Share Results', 'Continue'],
   on_load: function() {
-    // Load the leaderboard when the results screen appears
-    loadLeaderboard();
+    fetchLeaderboard(); // Load leaderboard at the start
+
+    let inputBox = document.getElementById("player-initials");
+    inputBox.focus(); // Auto-focus on initials input
+
+    document.getElementById("submit-score").addEventListener("click", function() {
+      let initials = inputBox.value.toUpperCase().trim();
+      if (/^[A-Z]{3}$/.test(initials)) {
+        submitScore(initials);
+      } else {
+        alert("Please enter exactly 3 letters (A-Z).");
+      }
+    });
   },
   on_finish: function(data) {
     
@@ -737,40 +752,55 @@ timeline.push(save_data); //final screen asking about data
 
 //Initialize the Experiment
 
-async function submitScore(playerName, playerScore) {
-  try {
-      const response = await fetch("/.netlify/functions/leaderboard", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-              name: playerName,
-              score: playerScore,
-              country: Intl.DateTimeFormat().resolvedOptions().timeZone // Using timezone as an identifier
-          }),
-      });
+function submitScore(initials) {
+  let playerData = {
+    name: initials,
+    score: totalScore,
+    country: Intl.DateTimeFormat().resolvedOptions().timeZone
+  };
 
-      return response.json(); // Return updated leaderboard
-  } catch (error) {
-      console.error("Error submitting score:", error);
-  }
+  fetch("/.netlify/functions/leaderboard", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(playerData)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Leaderboard updated:", data);
+    fetchLeaderboard(); // ✅ Update leaderboard immediately after submission
+  })
+  .catch(error => console.error("Error updating leaderboard:", error));
+}
+
+
+function fetchLeaderboard() {
+  fetch("/.netlify/functions/leaderboard")
+    .then(response => response.json())
+    .then(data => {
+      let leaderboardHTML = data.map((entry, index) => 
+        `<p>🥇 ${index + 1}. ${entry.name} - ${entry.score} (${entry.country})</p>`
+      ).join("");
+      document.getElementById("leaderboard").innerHTML = leaderboardHTML;
+    })
+    .catch(error => console.error("Error fetching leaderboard:", error));
 }
 
 
 
-async function loadLeaderboard() {
-  const response = await fetch("/.netlify/functions/leaderboard");
-  const leaderboard = await response.json();
+// async function loadLeaderboard() {
+//   const response = await fetch("/.netlify/functions/leaderboard");
+//   const leaderboard = await response.json();
 
-  let leaderboardHtml = "<ul style='list-style: none; padding: 0;'>";
-  leaderboard.forEach((entry, index) => {
-      leaderboardHtml += `<li style="font-size: 20px;">
-          🏅 ${index + 1}. <b>${entry.name}</b> - <span style="color: gold;">${entry.score}</span> (${entry.country})
-      </li>`;
-  });
-  leaderboardHtml += "</ul>";
+//   let leaderboardHtml = "<ul style='list-style: none; padding: 0;'>";
+//   leaderboard.forEach((entry, index) => {
+//       leaderboardHtml += `<li style="font-size: 20px;">
+//           🏅 ${index + 1}. <b>${entry.name}</b> - <span style="color: gold;">${entry.score}</span> (${entry.country})
+//       </li>`;
+//   });
+//   leaderboardHtml += "</ul>";
 
-  document.getElementById("leaderboard").innerHTML = leaderboardHtml;
-}
+//   document.getElementById("leaderboard").innerHTML = leaderboardHtml;
+// }
 
 
 
