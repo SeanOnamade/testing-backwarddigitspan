@@ -673,6 +673,8 @@ var bds_adaptive = {
 
 timeline.push(bds_adaptive);
 
+let pendingScore = null;
+
 var results_screen = {
   type: jsPsychHtmlButtonResponse,
   stimulus: function() {
@@ -680,6 +682,13 @@ var results_screen = {
       ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(2) 
       : "N/A";
     // console.log("All Recorded Response Times in ms:", responseTimes);
+
+    pendingScore = {
+      playerId: getPlayerId(),
+      name: "", // Empty until they enter initials
+      score: totalScore,
+      country: Intl.DateTimeFormat().resolvedOptions().timeZone
+    };
 
     return `
       <h2>🎉 Task Complete! 🎉</h2>
@@ -710,7 +719,9 @@ var results_screen = {
     document.getElementById("submit-score").addEventListener("click", function() {
       let initials = inputBox.value.toUpperCase().trim();
       if (/^[A-Z]{3}$/.test(initials)) {
-        submitScore(initials);
+        pendingScore.name = initials; // Assign initials
+
+        submitScore(pendingScore);
       } else {
         alert("Please enter exactly 3 letters (A-Z).");
       }
@@ -765,14 +776,7 @@ function getPlayerId() {
   return playerId;
 }
 
-function submitScore(initials) {
-  let playerData = {
-      playerId: getPlayerId(), // Unique per device
-      name: initials,  
-      score: totalScore,
-      country: Intl.DateTimeFormat().resolvedOptions().timeZone
-  };
-
+function submitScore(playerData) {
   fetch("/.netlify/functions/leaderboard", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -785,6 +789,7 @@ function submitScore(initials) {
   })
   .catch(error => console.error("Error updating leaderboard:", error));
 }
+
 
 
 function fetchLeaderboard() {
