@@ -12,20 +12,19 @@ exports.handler = async (event) => {
     if (event.httpMethod === "POST") {
         try {
             const body = JSON.parse(event.body);
-            const { playerId, score, name, country } = body;
+            const { score, name, country, playerId } = body;
 
-            if (!playerId || !score || !name) {
-                return { statusCode: 400, body: "Missing playerId, score, or name." };
+            if (!score || !name || !playerId) {
+                return { statusCode: 400, body: "Missing score, name, or playerId." };
             }
 
-            // Check if the player already exists in the leaderboard
+            // Check if the player already exists (same playerId)
             let existingPlayerIndex = leaderboard.findIndex(entry => entry.playerId === playerId);
 
             if (existingPlayerIndex !== -1) {
-                // Prevent duplicate entries by updating the existing score
+                // Update score if the new one is higher
                 if (score > leaderboard[existingPlayerIndex].score) {
                     leaderboard[existingPlayerIndex].score = score;
-                    leaderboard[existingPlayerIndex].name = name; // Update name if necessary
                 }
             } else {
                 // Add new entry
@@ -36,7 +35,7 @@ exports.handler = async (event) => {
             leaderboard.sort((a, b) => b.score - a.score);
             leaderboard = leaderboard.slice(0, 3);
 
-            // Store the leaderboard
+            // Convert leaderboard to a string and store it
             process.env.LEADERBOARD = JSON.stringify(leaderboard);
 
             return { statusCode: 200, body: JSON.stringify(leaderboard) };
@@ -56,6 +55,6 @@ exports.handler = async (event) => {
             body: JSON.stringify({ message: "Leaderboard reset successfully." }),
         };
     }
-
+    
     return { statusCode: 405, body: "Method Not Allowed" };
 };
