@@ -22,9 +22,11 @@ exports.handler = async (event) => {
             let existingPlayerIndex = leaderboard.findIndex(entry => entry.playerId === playerId);
 
             if (existingPlayerIndex !== -1) {
-                // Update score if the new one is higher
+                // Prevent duplicate score submissions (Only update if the new score is higher)
                 if (score > leaderboard[existingPlayerIndex].score) {
                     leaderboard[existingPlayerIndex].score = score;
+                } else {
+                    return { statusCode: 400, body: "Duplicate entry: Score not higher than previous." };
                 }
             } else {
                 // Add new entry
@@ -55,6 +57,6 @@ exports.handler = async (event) => {
             body: JSON.stringify({ message: "Leaderboard reset successfully." }),
         };
     }
-    
+
     return { statusCode: 405, body: "Method Not Allowed" };
 };

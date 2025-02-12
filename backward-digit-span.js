@@ -713,21 +713,18 @@ var results_screen = {
   on_load: function() {
     fetchLeaderboard(); // Load leaderboard at the start
 
+    let submitButton = document.getElementById("submit-score");
     let inputBox = document.getElementById("player-initials");
-    inputBox.focus(); // Auto-focus on initials input
+    if (submitButton && inputBox) {
+        submitButton.addEventListener("click", function() {
+            submitScore(); // Only submits score when button is clicked
+        });
+    } else {
+        console.error("Submit button or input box not found!");
+    }
 
-    document.getElementById("submit-score").addEventListener("click", function() {
-      let initials = inputBox.value.toUpperCase().trim();
-      if (/^[A-Z]{3}$/.test(initials)) {
-        pendingScore.name = initials; // Assign initials
-
-        submitScore(pendingScore);
-      } else {
-        alert("Please enter exactly 3 letters (A-Z).");
-      }
-    });
     document.getElementById("reset-leaderboard").addEventListener("click", function() {
-      resetLeaderboard();
+        resetLeaderboard();
     });
   },
   on_finish: function(data) {
@@ -773,15 +770,21 @@ function getPlayerId() {
 
 
 function submitScore() {
-  let initials = document.getElementById("player-initials").value.toUpperCase().trim();
+  let inputBox = document.getElementById("player-initials");
+  
+  if (!inputBox) {
+      console.error("Initials input box not found!");
+      return;
+  }
 
+  let initials = inputBox.value.toUpperCase().trim();
   if (!/^[A-Z]{3}$/.test(initials)) {
       alert("Please enter exactly 3 letters (A-Z).");
       return;
   }
 
   let playerData = {
-      playerId: getPlayerId(),  // Ensure we send playerId
+      playerId: getPlayerId(), // Unique per session
       name: initials,
       score: totalScore,
       country: Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -799,6 +802,7 @@ function submitScore() {
   })
   .catch(error => console.error("Error updating leaderboard:", error));
 }
+
 
 
 
